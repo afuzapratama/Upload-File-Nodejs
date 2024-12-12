@@ -1,0 +1,113 @@
+<% layout = 'layout' %>
+<h1 class="title">Upload File</h1>
+<form action="/upload" method="POST" enctype="multipart/form-data" class="box">
+  <div class="field">
+    <label class="label">Upload File</label>
+    <div class="control">
+      <input class="input" type="file" name="file" required>
+    </div>
+  </div>
+  <div class="field">
+    <label class="label">Expire (jam)</label>
+    <div class="control">
+      <input class="input" type="number" name="expireHours" placeholder="Misal: 24" min="1" required>
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <label class="checkbox">
+        <input type="checkbox" name="usePassword" id="usePasswordCheckbox">
+        Gunakan Password?
+      </label>
+    </div>
+  </div>
+  <div class="field" id="passwordField" style="display:none;">
+    <label class="label">Password</label>
+    <div class="control">
+      <input class="input" type="password" name="password" placeholder="Masukkan password untuk proteksi file">
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <button class="button is-primary" type="submit">Upload</button>
+    </div>
+  </div>
+</form>
+
+<hr>
+
+<h2 class="title is-4">Search File</h2>
+<form method="GET" action="/" class="box">
+  <div class="field">
+    <div class="control">
+      <input class="input" type="text" name="search" value="<%= search %>" placeholder="Cari berdasarkan nama file">
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <button class="button is-info" type="submit">Search</button>
+    </div>
+  </div>
+</form>
+
+<h2 class="title is-4">Daftar File Terbaru</h2>
+<table class="table is-fullwidth is-striped">
+  <thead>
+    <tr>
+      <th>Nama Asli</th>
+      <th>Link Download</th>
+      <th>Expire</th>
+      <th>Password Protected</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% files.forEach(file => { %>
+      <tr>
+        <td><%= file.originalName %></td>
+        <td><a href="/download/<%= file._id %>">Lihat</a></td>
+        <td><%= file.expiresAt.toLocaleString() %></td>
+        <td><%= file.passwordHash ? "Ya" : "Tidak" %></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<!-- Pagination -->
+<nav class="pagination is-centered" role="navigation" aria-label="pagination">
+  <% if (currentPage > 1) { %>
+    <a class="pagination-previous" href="/?page=<%= currentPage - 1 %><%= search ? '&search=' + search : ''%>">Previous</a>
+  <% } else { %>
+    <span class="pagination-previous" disabled>Previous</span>
+  <% } %>
+
+  <% if (currentPage < totalPages) { %>
+    <a class="pagination-next" href="/?page=<%= currentPage + 1 %><%= search ? '&search=' + search : ''%>">Next</a>
+  <% } else { %>
+    <span class="pagination-next" disabled>Next</span>
+  <% } %>
+
+  <ul class="pagination-list">
+    <% for (let p = 1; p <= totalPages; p++) { %>
+      <li>
+        <a class="pagination-link <%= p === currentPage ? 'is-current' : '' %>" 
+           href="/?page=<%= p %><%= search ? '&search=' + search : ''%>">
+          <%= p %>
+        </a>
+      </li>
+    <% } %>
+  </ul>
+</nav>
+
+<script>
+  // Script untuk show/hide password field
+  const checkbox = document.getElementById('usePasswordCheckbox');
+  const passwordField = document.getElementById('passwordField');
+
+  checkbox.addEventListener('change', function() {
+    if(this.checked) {
+      passwordField.style.display = 'block';
+    } else {
+      passwordField.style.display = 'none';
+    }
+  });
+</script>

@@ -1,0 +1,8 @@
+<% layout = 'layout' %>
+<h1 class="title">File Berhasil Diunggah</h1>
+<div class="box">
+  <p><strong>Nama Asli:</strong> <%= file.originalName %></p>
+  <p><strong>Expires At:</strong> <%= file.expiresAt.toLocaleString() %></p>
+  <p><strong>Download Link:</strong> <a href="<%= downloadLink %>"><%= downloadLink %></a></p>
+  <a class="button is-link" href="/">Upload File Lagi</a>
+</div>
